@@ -1,0 +1,14 @@
+server:
+  port: ${SERVER_PORT:10030}
+spring:
+  application:
+    name: gateway
+  cloud:
+    consul:
+      host: 47.95.121.41
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        service-name: gateway
+        register: false
+        healthCheckInterval: 15s
