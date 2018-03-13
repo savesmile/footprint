@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:10030}
+  port: ${SERVER_PORT:20000}
 spring:
   application:
     name: gateway
@@ -9,6 +9,6 @@ spring:
       port: 8500
       discovery:
         prefer-ip-address: true
+        healthCheckPath: ${management.contextPath}/health
+        healthCheckInterval: 3s
         service-name: gateway
-        register: false
-        healthCheckInterval: 15s
