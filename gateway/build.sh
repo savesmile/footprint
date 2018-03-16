@@ -1,5 +1,5 @@
 #!/bin/sh
-mvn clean package -Dmaven.test.skip=true -pl 23mofang-app-gateway -f ../pom.xml -am
+mvn clean package -Dmaven.test.skip=true -pl gateway -f ../pom.xml -am
 if [ $? -ne 0 ]; then
     echo "\n [BUILD ERROR]mvn install failed"
     exit 1
