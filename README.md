@@ -14,3 +14,9 @@ netstat -tlnp
 java -jar xxxx.jar
 nohup java -jar xxxx.jar
 
+### scp
+```bash
+scp gateway-1.0.0-SNAPSHOT.jar root@47.95.121.41:/usr/local/projectSpace/
+```
+
+

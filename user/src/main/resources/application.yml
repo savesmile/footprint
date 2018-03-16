@@ -1,15 +1,14 @@
 server:
-  port: ${SERVER_PORT:20000}
+  port: ${SERVER_PORT:10010}
 spring:
   application:
-    name: gateway
+    name: user
   cloud:
     consul:
-      host: localhost
+      host: 47.95.121.41
       discovery:
         prefer-ip-address: true
         healthCheckInterval: 15s
-        instance-id: gateway
   data:
     mongodb:
       uri: mongodb://47.95.121.41:27017/footprint

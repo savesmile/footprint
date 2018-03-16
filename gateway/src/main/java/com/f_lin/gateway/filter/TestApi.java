@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author F_lin fengjunlin@23mofang.com
  * @since 2018/3/16
  **/
-@FeignClient(value = "test", primary = false)
+@FeignClient(value = "gateway", primary = false)
 public interface TestApi {
 
     @RequestMapping(value = "/api/test", method = RequestMethod.GET)
