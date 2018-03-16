@@ -5,13 +5,11 @@ spring:
     name: gateway
   cloud:
     consul:
-      host: localhost
+      host: 47.95.121.41
       discovery:
         prefer-ip-address: true
         healthCheckInterval: 15s
-        service-name: gateway
+  data:
+    mongodb:
+      uri: mongodb://47.95.121.41:27017/footprint
 debug: true
-
-
-
-

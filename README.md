@@ -11,4 +11,6 @@ http://47.95.121.41:8500/ui/#/dc1/services
 ```bash
 netstat -tlnp
 ```
+java -jar xxxx.jar
+nohup java -jar xxxx.jar
 
