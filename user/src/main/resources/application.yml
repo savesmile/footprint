@@ -5,10 +5,12 @@ spring:
     name: user
   cloud:
     consul:
-      host: 47.95.121.41
+      host: localhost
+      #host: 192.168.0.105
       discovery:
         prefer-ip-address: true
-        healthCheckInterval: 15s
+        healthCheckInterval: 5s
+        instance-id: user
   data:
     mongodb:
       uri: mongodb://47.95.121.41:27017/footprint

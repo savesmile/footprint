@@ -5,12 +5,21 @@ spring:
     name: gateway
   cloud:
     consul:
-      host: localhost
+      #host: localhost
+      host: 192.168.0.105
       discovery:
         prefer-ip-address: true
-        healthCheckInterval: 15s
+        healthCheckInterval: 5s
         instance-id: gateway
   data:
     mongodb:
       uri: mongodb://47.95.121.41:27017/footprint
+zuul:
+  routes:
+    user:
+      path: /user/**
+      serviceId: user
+      stripPrefix: false
+
+
 debug: true
