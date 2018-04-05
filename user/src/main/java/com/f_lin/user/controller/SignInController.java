@@ -1,6 +1,5 @@
 package com.f_lin.user.controller;
 
-import com.f_lin.gateway.po.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

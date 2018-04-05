@@ -22,4 +22,10 @@ zuul:
       stripPrefix: false
 
 
+footprint:
+  filter:
+    no_token_verification:
+      - /user/sign-in
+      - /user/sign-up
+
 debug: true
