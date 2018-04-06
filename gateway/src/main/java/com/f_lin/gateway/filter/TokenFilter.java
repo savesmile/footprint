@@ -66,6 +66,6 @@ public class TokenFilter extends ZuulFilter {
 
 
     private String setMessage(String Message) {
-        return JSONObject.toJSONString(JsonResult.ofErrorResult(401, Message));
+        return JSONObject.toJSONString(JsonResult.error(Message));
     }
 }
