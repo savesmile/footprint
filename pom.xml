@@ -12,6 +12,7 @@
         <module>gateway</module>
         <module>user</module>
         <module>user-api</module>
+        <module>utils</module>
     </modules>
 
     <parent>

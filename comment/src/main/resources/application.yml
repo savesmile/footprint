@@ -1,8 +1,8 @@
 server:
-  port: ${SERVER_PORT:10010}
+  port: ${SERVER_PORT:10020}
 spring:
   application:
-    name: user
+    name: comment
   cloud:
     consul:
       #host: localhost
@@ -10,7 +10,7 @@ spring:
       discovery:
         prefer-ip-address: true
         healthCheckInterval: 5s
-        instance-id: user
+        instance-id: comment
         register: false
   data:
     mongodb:
