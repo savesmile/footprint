@@ -1,0 +1,22 @@
+server:
+  port: ${SERVER_PORT:10030}
+spring:
+  application:
+    name: common
+  cloud:
+    consul:
+      #host: localhost
+      host: 192.168.0.105
+      discovery:
+        prefer-ip-address: true
+        healthCheckInterval: 5s
+        instance-id: common
+  data:
+    mongodb:
+      uri: mongodb://47.95.121.41:27017/footprint
+
+img:
+  setting:
+    avatar: E:\resources\avatar\ #/usr/local/projectSpace/myImage/image/avatar
+    article: E:\resources\article\ #/usr/local/projectSpace/myImage/image/article
+debug: true

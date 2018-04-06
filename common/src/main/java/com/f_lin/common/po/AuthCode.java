@@ -1,10 +1,12 @@
-package com.f_lin.user_api.vo;
+package com.f_lin.common.po;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.util.Date;
 
 /**
  * @author F_lin
@@ -15,8 +17,10 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class SignPosts {
+public class AuthCode {
+    private String id;
     private String phone;
-    private String password;
     private String authCode;
+    private Integer aliveCount;
+    private Date createTime;
 }

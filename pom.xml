@@ -13,6 +13,9 @@
         <module>user</module>
         <module>user-api</module>
         <module>utils</module>
+        <module>common</module>
+        <module>comment</module>
+        <module>comment-api</module>
     </modules>
 
     <parent>

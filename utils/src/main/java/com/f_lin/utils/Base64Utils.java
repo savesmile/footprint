@@ -1,13 +1,12 @@
 package com.f_lin.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import sun.misc.BASE64Decoder;
+
+import java.io.*;
 import java.util.Base64;
 
 /**
  * Base64Utils
- *
  */
 public class Base64Utils {
 
@@ -45,5 +44,6 @@ public class Base64Utils {
         byte[] bytes = MIME_DECODER.decode(src);
         return new ByteArrayInputStream(bytes);
     }
+
 
 }

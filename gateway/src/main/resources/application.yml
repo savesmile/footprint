@@ -9,7 +9,7 @@ spring:
       host: 192.168.0.105
       discovery:
         prefer-ip-address: true
-        healthCheckInterval: 5s
+        healthCheckInterval: 15s
         instance-id: gateway
   data:
     mongodb:
@@ -20,7 +20,10 @@ zuul:
       path: /api/user/**
       serviceId: user
       stripPrefix: false
-
+    comment:
+      path: /api/comment/**
+      serviceId: comment
+      stripPrefix: false
 
 footprint:
   filter:
@@ -29,3 +32,5 @@ footprint:
       - /api/user/sign-up
 
 debug: true
+
+
