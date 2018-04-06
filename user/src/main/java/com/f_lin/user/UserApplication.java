@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"com.f_lin.gateway.filter"})
+@EnableFeignClients(basePackages = {"com.f_lin.*.api"})
 public class UserApplication {
 
     public static void main(String[] args) {

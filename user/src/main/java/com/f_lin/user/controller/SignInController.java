@@ -1,14 +1,9 @@
 package com.f_lin.user.controller;
 
+import com.f_lin.user_api.vo.SignPosts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author F_lin
@@ -19,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class SignInController {
     private final Logger log = LoggerFactory.getLogger(SignInController.class);
 
-    @Autowired
-    MongoOperations mongoOperations;
+    @PostMapping
+    public Object signIn(@RequestBody SignPosts signInPosts){
 
-    @GetMapping
-    public Test testZul() {
-        return mongoOperations.findOne(Query.query(Criteria.where("").is("")), Test.class);
+
+
+        return null;
     }
 }

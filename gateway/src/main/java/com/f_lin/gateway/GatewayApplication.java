@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"com.f_lin.*.filter"})
+@EnableFeignClients(basePackages = {"com.f_lin.*.api"})
 @EnableZuulProxy
 @Import(TokenVerificationSetting.class)
 public class GatewayApplication {

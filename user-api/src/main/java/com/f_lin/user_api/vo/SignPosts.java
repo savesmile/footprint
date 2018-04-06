@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class SignUpPosts {
+public class SignPosts {
     private String phone;
     private String password;
 }
