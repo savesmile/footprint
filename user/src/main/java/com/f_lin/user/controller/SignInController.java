@@ -1,5 +1,6 @@
 package com.f_lin.user.controller;
 
+import com.f_lin.comment_api.api.CommonApi;
 import com.f_lin.gateway.po.JsonResult;
 import com.f_lin.gateway.po.Token;
 import com.f_lin.gateway.support.UserId;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -29,6 +31,8 @@ public class SignInController {
 
     @Autowired
     UserApi userApi;
+    @Autowired
+    CommonApi commonApi;
     @Autowired
     MongoOperations mongoOperations;
 
@@ -56,7 +60,11 @@ public class SignInController {
     @PostMapping("/reset-pwd")
     public Object resetPwd(@UserId String userId,
                            @RequestBody SignPosts resetPosts) {
-
-        return JsonResult.success();
+        if (commonApi.verifyAuthCode(userId, resetPosts.getAuthCode())) {
+            mongoOperations.updateFirst(Query.query(Criteria.where("_id").is(userId)),
+                    Update.update("password", MD5Util.getMD5(resetPosts.getPassword())), User.class);
+            JsonResult.success(MapBuilder.of("result", true));
+        }
+        return JsonResult.success(MapBuilder.of("result", false));
     }
 }

@@ -1,6 +1,7 @@
 package com.f_lin.gateway;
 
 import com.f_lin.gateway.filter.TokenVerificationSetting;
+import com.f_lin.gateway.support.SimpleSupport;
 import com.f_lin.gateway.support.UserIdMethodArgumentResolver;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,15 +19,11 @@ import java.util.List;
 @EnableFeignClients(basePackages = {"com.f_lin.*.api"})
 @EnableZuulProxy
 @Import(TokenVerificationSetting.class)
-public class GatewayApplication extends WebMvcConfigurationSupport {
+public class GatewayApplication extends SimpleSupport {
 
     public static void main(String[] args) {
         SpringApplication.run(GatewayApplication.class, args);
     }
 
-    @Override
-    protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        // 注册UserIdMethodArgumentResolver的参数分解器
-        argumentResolvers.add(new UserIdMethodArgumentResolver());
-    }
+
 }

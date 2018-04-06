@@ -44,6 +44,16 @@
             <artifactId>utils</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.f_lin</groupId>
+            <artifactId>common-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.f_lin</groupId>
+            <artifactId>comment-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

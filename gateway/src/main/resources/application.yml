@@ -24,12 +24,17 @@ zuul:
       path: /api/comment/**
       serviceId: comment
       stripPrefix: false
-
+    common:
+       path: /api/common/**
+       serviceId: common
+       stripPrefix: false
 footprint:
   filter:
     no_token_verification:
       - /api/user/sign-in
       - /api/user/sign-up
+      - /api/common/auth-code
+      - /api/common/auth-code/verify
 
 debug: true
 
