@@ -12,6 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
  **/
 @FeignClient(value = "user")
 public interface UserApi {
-    @RequestMapping(value = "/user/{phone}", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/user/{phone}", method = RequestMethod.GET)
     User getUserByPhone(@PathVariable("phone") String phone);
 }

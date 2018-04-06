@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2018/3/16
  **/
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController implements UserApi {
 
     @Autowired

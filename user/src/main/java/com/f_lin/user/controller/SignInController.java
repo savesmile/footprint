@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2018/3/17
  **/
 @RestController
-@RequestMapping("/user/sign-in")
+@RequestMapping("/api/user/sign-in")
 public class SignInController {
     private final Logger log = LoggerFactory.getLogger(SignInController.class);
 
@@ -46,6 +46,8 @@ public class SignInController {
         String pwd = MD5Util.getMD5(signInPosts.getPassword());
         if (user == null || !pwd.equals(user.getPassword()))
             return JsonResult.error("用户名或密码错误");
-        return JsonResult.success(MapBuilder.of("token", TokenUtils.encryptionToken(new Token(user.getId()))));
+        return JsonResult.success(MapBuilder
+                .forTypeSO("token", TokenUtils.encryptionToken(new Token(user.getId())))
+                .with("userInfo", user.setPassword(null)).build());
     }
 }

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2018/3/17
  **/
 @RestController
-@RequestMapping("/user/sign-up")
+@RequestMapping("/api/user/sign-up")
 public class SignUpController {
 
     private static final String DEFAULT_AVATAR = "http://47.95.121.41/image/default_avatar.png";

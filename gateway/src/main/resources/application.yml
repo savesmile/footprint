@@ -17,7 +17,7 @@ spring:
 zuul:
   routes:
     user:
-      path: /user/**
+      path: /api/user/**
       serviceId: user
       stripPrefix: false
 
@@ -25,7 +25,7 @@ zuul:
 footprint:
   filter:
     no_token_verification:
-      - /user/sign-in
-      - /user/sign-up
+      - /api/user/sign-in
+      - /api/user/sign-up
 
 debug: true
