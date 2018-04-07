@@ -10,7 +10,7 @@ import com.f_lin.gateway.po.Token;
  **/
 public class TokenUtils {
     public static String encryptionToken(Token token) {
-        return Encryptor.input(token.toString()).aes(Token.DEFAULT_SALT).hex();
+        return Encryptor.input(token.getUserId()).aes(Token.DEFAULT_SALT).hex();
     }
 
     public static Token decryptionToken(String token) {

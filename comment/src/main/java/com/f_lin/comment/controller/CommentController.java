@@ -46,7 +46,6 @@ public class CommentController implements CommentApi {
     @PostMapping
     public Object postComment(@UserId String userId,
                               @RequestBody Comment comment) {
-        logger.info("+================================userId {} ==========================", userId);
         comment.setCreateDate(new Date());
         comment.setLikeCount(0);
         comment.setUserId(userId);
