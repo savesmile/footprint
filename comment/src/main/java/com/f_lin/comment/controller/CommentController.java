@@ -2,8 +2,10 @@ package com.f_lin.comment.controller;
 
 import com.f_lin.comment_api.api.CommentApi;
 import com.f_lin.comment_api.po.Comment;
+import com.f_lin.comment_api.vo.CommentVO;
 import com.f_lin.gateway.po.JsonResult;
 import com.f_lin.gateway.support.UserId;
+import com.f_lin.user_api.po.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.jws.Oneway;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author F_lin
@@ -34,7 +37,9 @@ public class CommentController implements CommentApi {
         if (comments.isEmpty()) {
             return JsonResult.error("没有评论");
         }
-        return JsonResult.success(comments);
+
+        List<CommentVO> VOs = comments.stream().map(c -> toVO(c)).collect(Collectors.toList());
+        return JsonResult.success(VOs);
     }
 
     @Override
@@ -51,5 +56,10 @@ public class CommentController implements CommentApi {
         comment.setUserId(userId);
         mongoOperations.save(comment);
         return JsonResult.success(comment);
+    }
+
+    private CommentVO toVO(Comment comment) {
+        User user = mongoOperations.findOne(Query.query(Criteria.where("_id").is(comment.getUserId())), User.class);
+        return new CommentVO().switchVO(comment, user.getNickName(), user.getAvatar());
     }
 }
