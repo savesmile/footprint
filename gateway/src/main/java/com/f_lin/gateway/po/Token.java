@@ -1,7 +1,9 @@
 package com.f_lin.gateway.po;
 
-import lombok.*;
-import lombok.experimental.Accessors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author F_lin
@@ -11,8 +13,6 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
-@Accessors(chain = true)
 public class Token {
     public static final String DEFAULT_SALT = "bishezhengtamananzuo";
     private String userId;
