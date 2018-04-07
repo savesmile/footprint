@@ -1,0 +1,18 @@
+server:
+  port: ${SERVER_PORT:10010}
+spring:
+  application:
+    name: user
+  cloud:
+    consul:
+      #host: localhost
+      host: 192.168.0.105
+      discovery:
+        prefer-ip-address: true
+        healthCheckInterval: 15s
+        instance-id: user
+        register: false
+  data:
+    mongodb:
+      uri: mongodb://47.95.121.41:27017/footprint
+debug: true

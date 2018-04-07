@@ -27,5 +27,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.f_lin</groupId>
+            <artifactId>gateway</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

@@ -1,0 +1,17 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.f_lin.gateway.filter.TokenVerificationSetting",
+      "name": "footprint.filter",
+      "type": "com.f_lin.gateway.filter.TokenVerificationSetting"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.f_lin.gateway.filter.TokenVerificationSetting",
+      "name": "footprint.filter.no-token-verification",
+      "type": "java.util.List<java.lang.String>"
+    }
+  ]
+}

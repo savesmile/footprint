@@ -88,12 +88,15 @@ public class UserController implements UserApi {
     @PostMapping("/un-focus")
     public Object postUnFocus(@UserId String userId,
                               @RequestBody JSONObject jsonObject) {
+        String focusUserId = jsonObject.getString("focusUserId");
         if (!mongoOperations.exists(Query.query(Criteria.where("userId").is(userId)
-                .and("focusUserIds").is(jsonObject.getString("focusUserId"))), Focus.class)) {
+                .and("focusUserIds").is(focusUserId)), Focus.class)) {
             return JsonResult.error("你并没有关注该用户。");
         }
         mongoOperations.upsert(Query.query(Criteria.where("userId").is(userId)),
-                new Update().pull("focusUserIds", jsonObject.getString("focusUserId")), Focus.class);
+                new Update().pull("focusUserIds", focusUserId), Focus.class);
+        mongoOperations.upsert(Query.query(Criteria.where("userId").is(focusUserId)),
+                new Update().pull("focusUserIds", userId), Focus.class);
         return JsonResult.success(MapBuilder.of("result", true));
     }
 

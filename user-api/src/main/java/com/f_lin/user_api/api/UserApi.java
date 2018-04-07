@@ -1,6 +1,7 @@
 package com.f_lin.user_api.api;
 
 import com.f_lin.user_api.po.User;
+import feign.Param;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
