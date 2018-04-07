@@ -27,6 +27,7 @@ public class ArticlesVO {
     private Integer likeCount;
     private String authorName;
     private String avatarPath;
+    private String location;
     private boolean isLike;
     private String content;
 
@@ -44,6 +45,7 @@ public class ArticlesVO {
         this.avatarPath = avatarPath;
         this.isLike = isLike;
         this.content = article.getContent();
+        this.location = article.getLocation();
         return this;
     }
 }

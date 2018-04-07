@@ -53,10 +53,6 @@ public class TokenFilter extends ZuulFilter {
         HttpServletRequest request = ctx.getRequest();
 
         String requestURI = request.getRequestURI();
-        try {
-            logger.info("校验 {} ,请求详情 {}", requestURI, request.getMethod() + " " + test(request));
-        } catch (IOException ignore) {
-        }
         List<String> tokenVerification = tokenVerificationSetting.getNo_token_verification();
         if (!tokenVerification.contains(requestURI)) {
             String tokenStr = request.getParameter("token");

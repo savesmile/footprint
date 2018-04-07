@@ -96,9 +96,9 @@ public class ArticleController {
         return JsonResult.success(mp.build());
     }
 
-    @GetMapping("/{article-id}")
+    @GetMapping("/detail")
     public Object getArticleOne(@UserId(required = false) String userId,
-                                @PathVariable("article-id") String articleId) {
+                                @RequestParam("article-id") String articleId) {
         Article article = mongoOperations.findOne(Query.query(Criteria.where("_id").is(articleId)), Article.class);
         User user = mongoOperations.findOne(Query.query(Criteria.where("_id").is(article.getUserId())), User.class);
         boolean focus = false;
