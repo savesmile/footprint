@@ -2,36 +2,29 @@ package com.f_lin.common.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.f_lin.common.ImageUploadSetting;
-import com.f_lin.common.po.AuthCode;
 import com.f_lin.gateway.po.JsonResult;
 import com.f_lin.gateway.support.UserId;
-import com.f_lin.user_api.po.User;
-import com.f_lin.utils.Base64Utils;
 import com.f_lin.utils.MapBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Decoder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author F_lin
  * @since 2018/4/6
  **/
-@CrossOrigin
 @RestController
 @RequestMapping("/api/common")
 public class CommonController {
@@ -47,7 +40,7 @@ public class CommonController {
     public Object upload(@UserId String userId,
                          @RequestParam("type") String type,
                          @RequestParam("image") MultipartFile multipartFile) {
-        if (StringUtils.isEmpty(userId)){
+        if (StringUtils.isEmpty(userId)) {
             return JsonResult.error("请登录后操作");
         }
         if (multipartFile.isEmpty() || StringUtils.isBlank(multipartFile.getOriginalFilename())) {
@@ -69,7 +62,7 @@ public class CommonController {
         } catch (Exception e) {
             return JsonResult.error("文件上传出错 请稍后重试");
         }
-        return JsonResult.success(MapBuilder.of("imagePath", sPath + uuid + root_fileName));
+        return JsonResult.success(MapBuilder.of("imagePath", sPath + type + File.separator + uuid + root_fileName));
     }
 
     private static void uploadFile(byte[] file, String filePath, String fileName) throws Exception {
@@ -82,7 +75,6 @@ public class CommonController {
         out.flush();
         out.close();
     }
-
 
     @PostMapping("/uploadByBase64")
     public Object uploadByBase64(//@UserId String userId,

@@ -4,10 +4,13 @@ import com.f_lin.comment_api.po.Article;
 import com.f_lin.comment_api.vo.ArticlesVO;
 import com.f_lin.gateway.po.JsonResult;
 import com.f_lin.gateway.support.UserId;
+import com.f_lin.gateway.utils.TokenUtils;
 import com.f_lin.user_api.api.UserApi;
 import com.f_lin.user_api.po.User;
 import com.f_lin.utils.MapBuilder;
 import com.f_lin.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/comment/article")
 public class ArticleController {
+    private static final Logger logger = LoggerFactory.getLogger(ArticleController.class);
 
     private static final String TYPE_FOCUS = "focus";
 
@@ -37,8 +41,15 @@ public class ArticleController {
     MongoOperations mongoOperations;
 
     @PostMapping
-    public Object postArticle(@UserId String userId,
+    public Object postArticle(@RequestParam String token,
                               @RequestBody Article article) {
+        String userId;
+        try {
+            userId = TokenUtils.decryptionToken(token).getUserId();
+        } catch (RuntimeException e) {
+            return JsonResult.error("请上传token 信息");
+        }
+
         article.setContent(article.getContent().replace("。", "。<br/>"));
         return JsonResult.success(
                 mongoOperations.findAndModify(
@@ -107,10 +118,10 @@ public class ArticleController {
             like = article.getLikeUserId().contains(userId);
             focus = userApi.isFocus(userId, article.getUserId());
         }
-        MapBuilder mp = MapBuilder.forTypeSO("article", new ArticlesVO().switchVO(article,
-                user.getNickName(),
-                user.getAvatar(),
-                like)).with("focus", focus);
+        MapBuilder mp = MapBuilder.forTypeSO("article", new ArticlesVO()
+                .switchVO(article, user.getNickName(),
+                        user.getAvatar(), like))
+                .with("focus", focus);
         /**
          * 加载点赞人的头像地址 6个
          */

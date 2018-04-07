@@ -71,6 +71,7 @@ public class TokenFilter extends ZuulFilter {
             }
             ctx.addZuulRequestHeader("x-auth-uid", token.getUserId());
             setOrigin(ctx.getResponse());
+            logger.info("======================userID {}====================", token.getUserId());
         }
         return null;
     }

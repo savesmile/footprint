@@ -1,5 +1,6 @@
 package com.f_lin.user.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.f_lin.comment_api.api.CommentApi;
 import com.f_lin.comment_api.po.Comment;
 import com.f_lin.gateway.po.JsonResult;
@@ -10,6 +11,8 @@ import com.f_lin.user_api.po.Focus;
 import com.f_lin.user_api.po.User;
 import com.f_lin.utils.MapBuilder;
 import jdk.nashorn.internal.objects.annotations.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -29,6 +32,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/user")
 public class UserController implements UserApi {
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     MongoOperations mongoOperations;
@@ -52,7 +56,10 @@ public class UserController implements UserApi {
 
     @Override
     @GetMapping("/focus/focused")
-    public boolean isFocus(@UserId String userId, String withUserId) {
+    public boolean isFocus(@UserId String userId,
+                           @RequestParam("with-user-id") String withUserId) {
+        logger.info("===============withUserId {} ==============", withUserId);
+        logger.info("===============userId {} ==============", userId);
         Focus focus = mongoOperations.findOne(Query.query(Criteria.where("userId").is(userId)), Focus.class);
         if (focus == null
                 || focus.getFocusUserIds() == null
@@ -65,25 +72,28 @@ public class UserController implements UserApi {
 
     @PostMapping("/focus")
     public Object postFocus(@UserId String userId,
-                            @RequestBody String focusUserId) {
+                            @RequestBody JSONObject jsonObject) {
+        String focusUserId = jsonObject.getString("focusUserId");
         if (mongoOperations.exists(Query.query(Criteria.where("userId").is(userId)
                 .and("focusUserIds").is(focusUserId)), Focus.class)) {
             return JsonResult.error("你已经关注该用户,请勿重复关注.");
         }
-        mongoOperations.updateFirst(Query.query(Criteria.where("userId").is(userId)),
+        mongoOperations.upsert(Query.query(Criteria.where("userId").is(userId)),
                 new Update().push("focusUserIds", focusUserId), Focus.class);
+        mongoOperations.upsert(Query.query(Criteria.where("userId").is(focusUserId)),
+                new Update().push("followUserIds", userId), Focus.class);
         return JsonResult.success(MapBuilder.of("result", true));
     }
 
     @PostMapping("/un-focus")
     public Object postUnFocus(@UserId String userId,
-                              @RequestBody String focusUserId) {
+                              @RequestBody JSONObject jsonObject) {
         if (!mongoOperations.exists(Query.query(Criteria.where("userId").is(userId)
-                .and("focusUserIds").is(focusUserId)), Focus.class)) {
+                .and("focusUserIds").is(jsonObject.getString("focusUserId"))), Focus.class)) {
             return JsonResult.error("你并没有关注该用户。");
         }
-        mongoOperations.updateFirst(Query.query(Criteria.where("userId").is(userId)),
-                new Update().pull("focusUserIds", focusUserId), Focus.class);
+        mongoOperations.upsert(Query.query(Criteria.where("userId").is(userId)),
+                new Update().pull("focusUserIds", jsonObject.getString("focusUserId")), Focus.class);
         return JsonResult.success(MapBuilder.of("result", true));
     }
 
@@ -99,7 +109,8 @@ public class UserController implements UserApi {
     @GetMapping("/my-follow")
     public Object getMyFollow(@UserId String userId) {
         Focus focus = mongoOperations.findOne(Query.query(Criteria.where("userId").is(userId)), Focus.class);
-        if (focus == null || focus.getFocusUserIds().isEmpty()) return JsonResult.error("该用户没有粉丝");
+        if (focus == null || focus.getFollowUserIds() == null || focus.getFollowUserIds().isEmpty())
+            return JsonResult.error("该用户没有粉丝");
         List<User> users = mongoOperations.find(Query.query(Criteria.where("_id").in(focus.getFollowUserIds())), User.class);
         List<SimpleUserVO> results = users.stream().map(f -> new SimpleUserVO(f)).collect(Collectors.toList());
         return JsonResult.success(results);
