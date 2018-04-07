@@ -28,6 +28,7 @@ public class ArticlesVO {
     private String authorName;
     private String avatarPath;
     private boolean isLike;
+    private String content;
 
     public ArticlesVO switchVO(Article article,
                                String authorName,
@@ -42,6 +43,7 @@ public class ArticlesVO {
         this.authorName = authorName;
         this.avatarPath = avatarPath;
         this.isLike = isLike;
+        this.content = article.getContent();
         return this;
     }
 }

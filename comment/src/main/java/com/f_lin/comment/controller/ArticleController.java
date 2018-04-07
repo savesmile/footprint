@@ -6,6 +6,7 @@ import com.f_lin.gateway.po.JsonResult;
 import com.f_lin.gateway.support.UserId;
 import com.f_lin.user_api.api.UserApi;
 import com.f_lin.user_api.po.User;
+import com.f_lin.utils.MapBuilder;
 import com.f_lin.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -16,9 +17,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -58,9 +57,9 @@ public class ArticleController {
 
     @GetMapping
     public Object getArticles(@UserId(required = false) String userId,
-                              @RequestParam(defaultValue = "default") String type) {
+                              @RequestParam(defaultValue = "default") String click_type) {
         Query query = Query.query(Criteria.where("secret").is(false)).with(new Sort(Sort.Direction.DESC, "createTime"));
-        if (TYPE_FOCUS.equals(type) && !StringUtils.isEmpty(userId)) {
+        if (TYPE_FOCUS.equals(click_type) && !StringUtils.isEmpty(userId)) {
             List<String> focusIds = userApi.getFocusUserList(userId);
             query.addCriteria(Criteria.where("userId").in(focusIds));
         }
@@ -72,6 +71,64 @@ public class ArticleController {
         return JsonResult.success(articles.stream().map(a -> toVO(a, userId)).collect(Collectors.toList()));
     }
 
+    @GetMapping("/time-line")
+    public Object getTimeLine(@UserId String userId) {
+        Query query = Query.query(Criteria.where("userId").is(userId)).with(new Sort(Sort.Direction.DESC, "_id"));
+        List<Article> articles = mongoOperations.find(query, Article.class);
+        return JsonResult.success(articles);
+    }
+
+    @GetMapping("/other-time-line")
+    public Object getOtherTimeLine(@UserId(required = false) String userId,
+                                   @RequestParam("other-user-id") String otherUserId) {
+        Query query = Query.query(Criteria.where("userId").is(otherUserId)
+                .and("secret").is(false))
+                .with(new Sort(Sort.Direction.DESC, "_id"));
+        List<Article> articles = mongoOperations.find(query, Article.class);
+        MapBuilder mp = MapBuilder.forTypeSO("article", articles);
+        if (StringUtils.isEmpty(userId)) {
+            mp.with("focus", userApi.isFocus(userId, otherUserId));
+        }
+        User user = mongoOperations.findOne(Query.query(Criteria.where("_id").is(otherUserId)), User.class);
+        if (user != null) {
+            mp.with("avatar", user.getAvatar()).with("nickname", user.getNickName());
+        }
+        return JsonResult.success(mp.build());
+    }
+
+    @GetMapping("/{article-id}")
+    public Object getArticleOne(@UserId(required = false) String userId,
+                                @PathVariable("article-id") String articleId) {
+        Article article = mongoOperations.findOne(Query.query(Criteria.where("_id").is(articleId)), Article.class);
+        User user = mongoOperations.findOne(Query.query(Criteria.where("_id").is(article.getUserId())), User.class);
+        boolean focus = false;
+        boolean like = false;
+        if (StringUtils.isEmpty(userId)) {
+            like = article.getLikeUserId().contains(userId);
+            focus = userApi.isFocus(userId, article.getUserId());
+        }
+        MapBuilder mp = MapBuilder.forTypeSO("article", new ArticlesVO().switchVO(article,
+                user.getNickName(),
+                user.getAvatar(),
+                like)).with("focus", focus);
+        /**
+         * 加载点赞人的头像地址 6个
+         */
+        List<String> userIds = article.getLikeUserId();
+        if (!userIds.isEmpty()) {
+            mp.with("likeCount", userIds.size());
+            if (userIds.size() > 6) userIds = userIds.subList(0, 5);
+            Query query = Query.query(Criteria.where("").is(""));
+            query.fields().include("avatar");
+            List<String> avatars = new ArrayList<>();
+            for (String id : userIds) {
+                query.addCriteria(Criteria.where("_id").is(id));
+                avatars.add(mongoOperations.findOne(query, User.class).getAvatar());
+            }
+            mp.with("likeAvatar", avatars);
+        }
+        return JsonResult.success(mp.build());
+    }
 
     private ArticlesVO toVO(Article article, String userId) {
         User user = mongoOperations.findOne(Query.query(Criteria.where("_id").is(article.getUserId())), User.class);
