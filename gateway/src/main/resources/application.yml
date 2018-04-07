@@ -35,6 +35,7 @@ footprint:
       - /api/user/sign-up
       - /api/common/auth-code
       - /api/common/auth-code/verify
+      - /api/comment/article
 
 debug: true
 

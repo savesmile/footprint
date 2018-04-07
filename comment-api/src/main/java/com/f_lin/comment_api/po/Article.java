@@ -25,7 +25,8 @@ public class Article {
     private Date createTime;
     private String summary;
     private String location;
-    private String secret;
+    private String content;
+    private boolean secret;
     private String imgPath;
     private Integer likeCount;
     private List<String> likeUserId;

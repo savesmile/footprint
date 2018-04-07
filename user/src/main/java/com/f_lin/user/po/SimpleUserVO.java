@@ -1,5 +1,6 @@
-package com.f_lin.user_api.po;
+package com.f_lin.user.po;
 
+import com.f_lin.user_api.po.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,29 +9,21 @@ import lombok.experimental.Accessors;
 
 /**
  * @author F_lin
- * @since 2018/4/6
+ * @since 2018/4/7
  **/
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class User {
-    /**
-     * 默认男性
-     */
-    public static final int SEX_MALE = 0;
-    /**
-     * 默认女性
-     */
-    public static final int SEX_FEMALE = 1;
-
-    private String id;
-    private int sex;
+public class SimpleUserVO {
     private String nickName;
-    private String phone;
-    private String password;
     private String introduction;
     private String avatar;
 
+    public SimpleUserVO(User user) {
+        this.nickName = user.getNickName();
+        this.introduction = user.getIntroduction();
+        this.avatar = user.getAvatar();
+    }
 }

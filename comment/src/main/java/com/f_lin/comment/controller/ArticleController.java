@@ -4,6 +4,7 @@ import com.f_lin.comment_api.po.Article;
 import com.f_lin.comment_api.vo.ArticlesVO;
 import com.f_lin.gateway.po.JsonResult;
 import com.f_lin.gateway.support.UserId;
+import com.f_lin.user_api.api.UserApi;
 import com.f_lin.user_api.po.User;
 import com.f_lin.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/comment/article")
 public class ArticleController {
 
-    public static final String TYPE_FOCUS = "focus";
+    private static final String TYPE_FOCUS = "focus";
+
+    @Autowired
+    UserApi userApi;
 
     @Autowired
     MongoOperations mongoOperations;
@@ -36,12 +40,18 @@ public class ArticleController {
     @PostMapping
     public Object postArticle(@UserId String userId,
                               @RequestBody Article article) {
+        article.setContent(article.getContent().replace("。", "。<br/>"));
         return JsonResult.success(
                 mongoOperations.findAndModify(
                         Query.query(Criteria.where("userId").is(userId).and("createTime").is(new Date())),
                         Update.update("likeCount", 0)
                                 .set("location", article.getLocation().replace(" ", " # "))
-                                .set("likeUserId", Collections.emptyList()),
+                                .set("likeUserId", Collections.emptyList())
+                                .set("title", article.getTitle())
+                                .set("summary", article.getSummary())
+                                .set("secret", article.isSecret())
+                                .set("imgPath", article.getImgPath())
+                                .set("content", article.getContent()),
                         FindAndModifyOptions.options().returnNew(true).upsert(true),
                         Article.class));
     }
@@ -51,8 +61,8 @@ public class ArticleController {
                               @RequestParam(defaultValue = "default") String type) {
         Query query = Query.query(Criteria.where("secret").is(false)).with(new Sort(Sort.Direction.DESC, "createTime"));
         if (TYPE_FOCUS.equals(type) && !StringUtils.isEmpty(userId)) {
-            //不对 FIXME 查看关注列表
-            query.addCriteria(Criteria.where("likeUserId").is(userId));
+            List<String> focusIds = userApi.getFocusUserList(userId);
+            query.addCriteria(Criteria.where("userId").in(focusIds));
         }
         query.fields().exclude("location");
 
@@ -65,6 +75,7 @@ public class ArticleController {
 
     private ArticlesVO toVO(Article article, String userId) {
         User user = mongoOperations.findOne(Query.query(Criteria.where("_id").is(article.getUserId())), User.class);
+        if (user == null) return new ArticlesVO();
         return new ArticlesVO().switchVO(article, user.getNickName(),
                 user.getAvatar(), !StringUtils.isEmpty(userId) && article.getLikeUserId().contains(userId));
     }
