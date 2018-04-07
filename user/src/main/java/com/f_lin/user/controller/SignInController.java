@@ -60,11 +60,11 @@ public class SignInController {
     @PostMapping("/reset-pwd")
     public Object resetPwd(@UserId String userId,
                            @RequestBody SignPosts resetPosts) {
-        if (commonApi.verifyAuthCode(userId, resetPosts.getAuthCode())) {
-            mongoOperations.updateFirst(Query.query(Criteria.where("_id").is(userId)),
-                    Update.update("password", MD5Util.getMD5(resetPosts.getPassword())), User.class);
-            JsonResult.success(MapBuilder.of("result", true));
-        }
-        return JsonResult.success(MapBuilder.of("result", false));
+        //if (commonApi.verifyAuthCode(userId, resetPosts.getAuthCode())) {
+        mongoOperations.updateFirst(Query.query(Criteria.where("_id").is(userId)),
+                Update.update("password", MD5Util.getMD5(resetPosts.getPassword())), User.class);
+        return JsonResult.success(MapBuilder.of("result", true));
+        // }
+        // return JsonResult.success(MapBuilder.of("result", false));
     }
 }

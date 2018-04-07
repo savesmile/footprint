@@ -1,2 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.f_lin.gateway.support.CorsConfig
+#org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+#com.f_lin.gateway.support.CorsConfig

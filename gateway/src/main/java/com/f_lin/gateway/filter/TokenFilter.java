@@ -38,7 +38,7 @@ public class TokenFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return 0;
+        return 10000;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class TokenFilter extends ZuulFilter {
                 return null;
             }
             ctx.addZuulRequestHeader("x-auth-uid", token.getUserId());
-            //setOrigin(ctx.getResponse());
+            setOrigin(ctx.getResponse());
         }
         return null;
     }
@@ -83,9 +83,9 @@ public class TokenFilter extends ZuulFilter {
         //这里填写你允许进行跨域的主机ip
         httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
         //允许的访问方法
-        httpServletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE, PATCH");
+        httpServletResponse.setHeader("Access-Control-Allow-Methods", "*");
         //Access-Control-Max-Age 用于 CORS 相关配置的缓存
-        httpServletResponse.setHeader("Access-Control-Max-Age", "3600");
+        httpServletResponse.setHeader("Access-Control-Max-Age", "18000L");
         httpServletResponse.setHeader("Access-Control-Allow-Headers", "*");
     }
 
