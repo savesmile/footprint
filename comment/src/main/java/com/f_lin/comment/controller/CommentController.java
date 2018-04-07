@@ -4,6 +4,8 @@ import com.f_lin.comment_api.api.CommentApi;
 import com.f_lin.comment_api.po.Comment;
 import com.f_lin.gateway.po.JsonResult;
 import com.f_lin.gateway.support.UserId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/comment")
 public class CommentController implements CommentApi {
+    private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
 
     @Autowired
     MongoOperations mongoOperations;
@@ -43,6 +46,7 @@ public class CommentController implements CommentApi {
     @PostMapping
     public Object postComment(@UserId String userId,
                               @RequestBody Comment comment) {
+        logger.info("+================================userId {} ==========================", userId);
         comment.setCreateDate(new Date());
         comment.setLikeCount(0);
         comment.setUserId(userId);
