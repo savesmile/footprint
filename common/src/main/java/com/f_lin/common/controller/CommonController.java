@@ -1,5 +1,6 @@
 package com.f_lin.common.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.f_lin.common.ImageUploadSetting;
 import com.f_lin.common.po.AuthCode;
 import com.f_lin.gateway.po.JsonResult;
@@ -64,19 +65,19 @@ public class CommonController {
 
     @PostMapping("/uploadByBase64")
     public Object uploadByBase64(@UserId String userId,
-                                 @RequestBody String image) {
+                                 @RequestBody JSONObject jsonObject) {
         if (com.f_lin.utils.StringUtils.isEmpty(userId)) {
             return JsonResult.error("请登录后操作");
         }
         Map<String, String> setting = imageUploadSetting.getSetting();
+        String path;
         try {
-            generateImage(image, setting.get("avatar"));
+            path = generateImage(jsonObject.getString("image"), setting.get(jsonObject.getString("type")), jsonObject.getString("type"));
         } catch (IOException e) {
             return JsonResult.error("图片上传失败!");
         }
-        return JsonResult.success();
+        return JsonResult.success(MapBuilder.of("path", path));
     }
-
 
 
     private static void uploadFile(byte[] file, String filePath, String fileName) throws Exception {
@@ -96,7 +97,7 @@ public class CommonController {
      * @return
      * @Description: 将base64编码字符串转换为图片
      */
-    private static String generateImage(String imgStr, String path) throws IOException {
+    private String generateImage(String imgStr, String path, String type) throws IOException {
         String imgType = "";
         if (imgStr.contains(",")) {
             imgType = imgStr.split(",")[0];
@@ -118,8 +119,13 @@ public class CommonController {
             if (!targetFile.exists()) {
                 targetFile.mkdirs();
             }
-            String oP = path + UUID.randomUUID().toString() + "." + ("".equals(imgType) ? "" : imgType);
-            OutputStream out = new FileOutputStream(oP);
+            String lPath = UUID.randomUUID().toString() + "." + ("".equals(imgType) ? "" : imgType);
+            String oPath = path + lPath;
+            OutputStream out = new FileOutputStream(oPath);
+            String oP = imageUploadSetting.getStaticPath()
+                    + type
+                    + File.separator
+                    + lPath;
             out.write(b);
             out.flush();
             out.close();

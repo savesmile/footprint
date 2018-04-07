@@ -20,4 +20,5 @@ import java.util.Map;
 @ConfigurationProperties("img")
 public class ImageUploadSetting {
     private Map<String, String> setting = new HashMap<>();
+    private String staticPath;
 }

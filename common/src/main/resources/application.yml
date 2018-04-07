@@ -17,6 +17,8 @@ spring:
 
 img:
   setting:
-    avatar: E:\resources\avatar\ #/usr/local/projectSpace/myImage/image/avatar
-    article: E:\resources\article\ #/usr/local/projectSpace/myImage/image/article
+    avatar: /usr/local/projectSpace/myImage/image/avatar/ #E:\resources\avatar\
+    article: /usr/local/projectSpace/myImage/image/article/
+  staticPath: http://47.95.121.41/image/
+
 debug: true

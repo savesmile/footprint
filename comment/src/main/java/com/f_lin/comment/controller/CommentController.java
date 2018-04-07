@@ -9,6 +9,7 @@ import com.f_lin.user_api.po.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -33,7 +34,9 @@ public class CommentController implements CommentApi {
 
     @GetMapping("/list")
     public Object getCommentByArticleId(@RequestParam("article_id") String articleId) {
-        List<Comment> comments = mongoOperations.find(Query.query(Criteria.where("articleId").is(articleId)), Comment.class);
+        Query query = Query.query(Criteria.where("articleId").is(articleId));
+        query.with(new Sort(Sort.Direction.DESC, "_id"));
+        List<Comment> comments = mongoOperations.find(, Comment.class);
         if (comments.isEmpty()) {
             return JsonResult.error("没有评论");
         }
