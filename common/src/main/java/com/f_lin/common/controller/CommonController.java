@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Decoder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import java.util.*;
  * @author F_lin
  * @since 2018/4/6
  **/
+@CrossOrigin
 @RestController
 @RequestMapping("/api/common")
 public class CommonController {
@@ -43,7 +45,11 @@ public class CommonController {
 
     @PostMapping("/uploadByFile")
     public Object upload(@UserId String userId,
+                         @RequestParam("type") String type,
                          @RequestParam("image") MultipartFile multipartFile) {
+        if (StringUtils.isEmpty(userId)){
+            return JsonResult.error("请登录后操作");
+        }
         if (multipartFile.isEmpty() || StringUtils.isBlank(multipartFile.getOriginalFilename())) {
             return JsonResult.error("文件为空");
         }
@@ -54,31 +60,17 @@ public class CommonController {
         String root_fileName = multipartFile.getOriginalFilename();
         logger.info("上传图片:name={},type={}", root_fileName, contentType);
         Map<String, String> setting = imageUploadSetting.getSetting();
-        String filePath = setting.get("avatar");
+        String filePath = setting.get(type);
+        String sPath = imageUploadSetting.getStaticPath();
+        String uuid = UUID.randomUUID().toString();
+
         try {
-            uploadFile(multipartFile.getBytes(), filePath, UUID.randomUUID() + root_fileName);
+            uploadFile(multipartFile.getBytes(), filePath, uuid + root_fileName);
         } catch (Exception e) {
             return JsonResult.error("文件上传出错 请稍后重试");
         }
-        return JsonResult.success(MapBuilder.of("imagePath", filePath + UUID.randomUUID() + root_fileName));
+        return JsonResult.success(MapBuilder.of("imagePath", sPath + uuid + root_fileName));
     }
-
-    @PostMapping("/uploadByBase64")
-    public Object uploadByBase64(@UserId String userId,
-                                 @RequestBody JSONObject jsonObject) {
-        if (com.f_lin.utils.StringUtils.isEmpty(userId)) {
-            return JsonResult.error("请登录后操作");
-        }
-        Map<String, String> setting = imageUploadSetting.getSetting();
-        String path;
-        try {
-            path = generateImage(jsonObject.getString("image"), setting.get(jsonObject.getString("type")), jsonObject.getString("type"));
-        } catch (IOException e) {
-            return JsonResult.error("图片上传失败!");
-        }
-        return JsonResult.success(MapBuilder.of("path", path));
-    }
-
 
     private static void uploadFile(byte[] file, String filePath, String fileName) throws Exception {
         File targetFile = new File(filePath);
@@ -89,6 +81,23 @@ public class CommonController {
         out.write(file);
         out.flush();
         out.close();
+    }
+
+
+    @PostMapping("/uploadByBase64")
+    public Object uploadByBase64(//@UserId String userId,
+                                 @RequestBody JSONObject jsonObject) {
+       /* if (com.f_lin.utils.StringUtils.isEmpty(userId)) {
+            return JsonResult.error("请登录后操作");
+        }*/
+        Map<String, String> setting = imageUploadSetting.getSetting();
+        String path;
+        try {
+            path = generateImage(jsonObject.getString("image"), setting.get(jsonObject.getString("type")), jsonObject.getString("type"));
+        } catch (IOException e) {
+            return JsonResult.error("图片上传失败!");
+        }
+        return JsonResult.success(MapBuilder.of("path", path));
     }
 
     /**

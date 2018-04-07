@@ -36,7 +36,7 @@ public class CommentController implements CommentApi {
     public Object getCommentByArticleId(@RequestParam("article_id") String articleId) {
         Query query = Query.query(Criteria.where("articleId").is(articleId));
         query.with(new Sort(Sort.Direction.DESC, "_id"));
-        List<Comment> comments = mongoOperations.find(, Comment.class);
+        List<Comment> comments = mongoOperations.find(query, Comment.class);
         if (comments.isEmpty()) {
             return JsonResult.error("没有评论");
         }
