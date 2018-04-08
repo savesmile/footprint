@@ -86,7 +86,10 @@ public class ArticleController {
     public Object getTimeLine(@UserId String userId) {
         Query query = Query.query(Criteria.where("userId").is(userId)).with(new Sort(Sort.Direction.DESC, "_id"));
         List<Article> articles = mongoOperations.find(query, Article.class);
-        return JsonResult.success(articles);
+        User user = mongoOperations.findOne(Query.query(Criteria.where("_id").is(userId)), User.class);
+        return JsonResult.success(MapBuilder.forTypeSO("articles", articles)
+                .with("authorName", user.getNickName())
+                .with("authorAvatarPath", user.getAvatar()).build());
     }
 
     @GetMapping("/other-time-line")
@@ -96,13 +99,14 @@ public class ArticleController {
                 .and("secret").is(false))
                 .with(new Sort(Sort.Direction.DESC, "_id"));
         List<Article> articles = mongoOperations.find(query, Article.class);
-        MapBuilder mp = MapBuilder.forTypeSO("article", articles);
-        if (StringUtils.isEmpty(userId)) {
+        MapBuilder mp = MapBuilder.forTypeSO("articles", articles);
+        mp.with("focus", false);
+        if (!StringUtils.isEmpty(userId)) {
             mp.with("focus", userApi.isFocus(userId, otherUserId));
         }
         User user = mongoOperations.findOne(Query.query(Criteria.where("_id").is(otherUserId)), User.class);
         if (user != null) {
-            mp.with("avatar", user.getAvatar()).with("nickname", user.getNickName());
+            mp.with("authorAvatarPath", user.getAvatar()).with("authorName", user.getNickName());
         }
         return JsonResult.success(mp.build());
     }
@@ -134,7 +138,6 @@ public class ArticleController {
             for (String id : userIds) {
                 Query query = Query.query(Criteria.where("_id").is(id));
                 query.fields().include("avatar");
-                query.addCriteria(Criteria.where("_id").is(id));
                 avatars.add(mongoOperations.findOne(query, User.class).getAvatar());
             }
             mp.with("likeAvatar", avatars);

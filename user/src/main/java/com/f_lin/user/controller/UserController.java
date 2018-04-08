@@ -45,6 +45,7 @@ public class UserController implements UserApi {
         return mongoOperations.findOne(Query.query(Criteria.where("phone").is(phone)), User.class);
     }
 
+
     @Override
     @GetMapping("/focus")
     public List<String> getFocusUserList(@RequestParam("user-id") String userId) {
@@ -68,6 +69,12 @@ public class UserController implements UserApi {
         return true;
     }
 
+    @GetMapping("/info")
+    public Object getUserInfo(@UserId String userId) {
+        User user = mongoOperations.findOne(Query.query(Criteria.where("_id").is(userId)), User.class);
+
+        return JsonResult.success(MapBuilder.forTypeSO("name", user.getNickName()).with("avatar", user.getAvatar()).build());
+    }
 
     @PostMapping("/focus")
     public Object postFocus(@UserId String userId,
