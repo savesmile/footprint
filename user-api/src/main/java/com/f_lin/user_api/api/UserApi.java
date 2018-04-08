@@ -1,7 +1,6 @@
 package com.f_lin.user_api.api;
 
 import com.f_lin.user_api.po.User;
-import feign.Param;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,10 +17,10 @@ public interface UserApi {
 
 
     @RequestMapping(value = "/api/user/focus", method = RequestMethod.GET)
-    List<String> getFocusUserList(@RequestHeader("x-auth-uid") String userId);
+    List<String> getFocusUserList(@RequestParam("user-id") String userId);
 
     @RequestMapping(value = "/api/user/focus/focused", method = RequestMethod.GET)
-    boolean isFocus(@RequestHeader("x-auth-uid") String userId,
+    boolean isFocus(@RequestParam("user-id") String userId,
                     @RequestParam("with-user-id") String withUserId);
 
 }

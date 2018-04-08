@@ -47,7 +47,7 @@ public class UserController implements UserApi {
 
     @Override
     @GetMapping("/focus")
-    public List<String> getFocusUserList(@UserId String userId) {
+    public List<String> getFocusUserList(@RequestParam("user-id") String userId) {
         Focus focus = mongoOperations.findOne(Query.query(Criteria.where("userId").is(userId)), Focus.class);
         if (focus == null || focus.getFocusUserIds() == null || focus.getFocusUserIds().isEmpty())
             return Collections.emptyList();
@@ -56,10 +56,8 @@ public class UserController implements UserApi {
 
     @Override
     @GetMapping("/focus/focused")
-    public boolean isFocus(@UserId String userId,
+    public boolean isFocus(@RequestParam("user-id") String userId,
                            @RequestParam("with-user-id") String withUserId) {
-        logger.info("===============withUserId {} ==============", withUserId);
-        logger.info("===============userId {} ==============", userId);
         Focus focus = mongoOperations.findOne(Query.query(Criteria.where("userId").is(userId)), Focus.class);
         if (focus == null
                 || focus.getFocusUserIds() == null
