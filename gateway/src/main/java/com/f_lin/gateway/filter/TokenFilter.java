@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.f_lin.gateway.po.JsonResult;
 import com.f_lin.gateway.po.Token;
 import com.f_lin.gateway.utils.TokenUtils;
+import com.f_lin.utils.StringUtils;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.f_lin.utils.IOUtils;
@@ -54,8 +55,8 @@ public class TokenFilter extends ZuulFilter {
 
         String requestURI = request.getRequestURI();
         List<String> tokenVerification = tokenVerificationSetting.getNo_token_verification();
-        if (!tokenVerification.contains(requestURI)) {
-            String tokenStr = request.getParameter("token");
+        String tokenStr = request.getParameter("token");
+        if (!StringUtils.isEmpty(tokenStr) || !tokenVerification.contains(requestURI)) {
             if (tokenStr == null || "".equals(tokenStr)) {
                 ctx.setSendZuulResponse(false);
                 ctx.setResponseStatusCode(401);

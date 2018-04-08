@@ -58,6 +58,7 @@ public class UserController implements UserApi {
     @GetMapping("/focus/focused")
     public boolean isFocus(@RequestParam("user-id") String userId,
                            @RequestParam("with-user-id") String withUserId) {
+        logger.info("======= {} {} =========", userId, withUserId);
         Focus focus = mongoOperations.findOne(Query.query(Criteria.where("userId").is(userId)), Focus.class);
         if (focus == null
                 || focus.getFocusUserIds() == null

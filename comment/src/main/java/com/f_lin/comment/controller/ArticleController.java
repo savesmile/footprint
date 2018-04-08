@@ -110,11 +110,12 @@ public class ArticleController {
     @GetMapping("/detail")
     public Object getArticleOne(@UserId(required = false) String userId,
                                 @RequestParam("article-id") String articleId) {
+        logger.info("============userId {} ===========", userId);
         Article article = mongoOperations.findOne(Query.query(Criteria.where("_id").is(articleId)), Article.class);
         User user = mongoOperations.findOne(Query.query(Criteria.where("_id").is(article.getUserId())), User.class);
         boolean focus = false;
         boolean like = false;
-        if (StringUtils.isEmpty(userId)) {
+        if (!StringUtils.isEmpty(userId)) {
             like = article.getLikeUserId().contains(userId);
             focus = userApi.isFocus(userId, article.getUserId());
         }
@@ -129,10 +130,10 @@ public class ArticleController {
         if (!userIds.isEmpty()) {
             mp.with("likeCount", userIds.size());
             if (userIds.size() > 6) userIds = userIds.subList(0, 5);
-            Query query = Query.query(Criteria.where("").is(""));
-            query.fields().include("avatar");
             List<String> avatars = new ArrayList<>();
             for (String id : userIds) {
+                Query query = Query.query(Criteria.where("_id").is(id));
+                query.fields().include("avatar");
                 query.addCriteria(Criteria.where("_id").is(id));
                 avatars.add(mongoOperations.findOne(query, User.class).getAvatar());
             }
@@ -140,6 +141,29 @@ public class ArticleController {
         }
         return JsonResult.success(mp.build());
     }
+
+    @GetMapping("/like")
+    public Object likeArticle(@UserId String userId,
+                              @RequestParam String articleId,
+                              @RequestParam String click_type) {
+        if ("like".equals(click_type)) {
+            if (mongoOperations.exists(Query.query(Criteria.where("_id").is(articleId).and("likeUserId").is(userId)), Article.class)) {
+                return JsonResult.error("不能重复点赞");
+            }
+            mongoOperations.updateFirst(
+                    Query.query(Criteria.where("_id").is(articleId)),
+                    new Update().push("likeUserId", userId).inc("likeCount", 1), Article.class);
+        } else {
+            if (!mongoOperations.exists(Query.query(Criteria.where("_id").is(articleId).and("likeUserId").is(userId)), Article.class)) {
+                return JsonResult.error("不能重复取消点赞");
+            }
+            mongoOperations.updateFirst(
+                    Query.query(Criteria.where("_id").is(articleId)),
+                    new Update().pull("likeUserId", userId).inc("likeCount", -1), Article.class);
+        }
+        return JsonResult.success();
+    }
+
 
     private ArticlesVO toVO(Article article, String userId) {
         User user = mongoOperations.findOne(Query.query(Criteria.where("_id").is(article.getUserId())), User.class);
