@@ -47,8 +47,8 @@ public class CommentController implements CommentApi {
 
     @Override
     @GetMapping
-    public List<Comment> getCommentByUserId(@UserId String userId) {
-        return mongoOperations.find(Query.query(Criteria.where("userId").is(userId)), Comment.class);
+    public List<Comment> getCommentByUserId(@RequestParam("user-id") String userId) {
+        return mongoOperations.find(Query.query(Criteria.where("toUserId").is(userId)), Comment.class);
     }
 
     @PostMapping

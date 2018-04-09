@@ -5,6 +5,7 @@ import com.f_lin.comment_api.api.CommentApi;
 import com.f_lin.comment_api.po.Comment;
 import com.f_lin.gateway.po.JsonResult;
 import com.f_lin.gateway.support.UserId;
+import com.f_lin.user.po.MessageVO;
 import com.f_lin.user.po.SimpleUserVO;
 import com.f_lin.user_api.api.UserApi;
 import com.f_lin.user_api.po.Focus;
@@ -14,12 +15,14 @@ import jdk.nashorn.internal.objects.annotations.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -129,9 +132,38 @@ public class UserController implements UserApi {
     @GetMapping("/messages")
     public Object getMessages(@UserId String userId) {
         List<Comment> comments = commentApi.getCommentByUserId(userId);
+        List<MessageVO> VOs = new ArrayList<>();
         if (!comments.isEmpty()) {
             comments.sort(Comparator.comparing(Comment::getCreateDate));
+            VOs = comments.stream().map(co -> {
+                User user = mongoOperations.findOne(Query.query(Criteria.where("_id").is(co.getUserId())), User.class);
+                return new MessageVO().switchVO(co, user.getNickName(), user.getAvatar());
+            }).collect(Collectors.toList());
         }
-        return JsonResult.success(comments);
+        return JsonResult.success(VOs);
+    }
+
+    @PostMapping("/info")
+    public Object updateInfo(@UserId String userId,
+                             @RequestBody SimpleUserVO userInfo) {
+        Update update = new Update();
+        boolean flag = false;
+        if (userInfo.getAvatar() != null) {
+            update.set("avatar", userInfo.getAvatar());
+            flag = true;
+        }
+        if (userInfo.getIntroduction() != null) {
+            update.set("introduction", userInfo.getIntroduction());
+            flag = true;
+        }
+        if (userInfo.getNickName() != null) {
+            update.set("nickName", userInfo.getNickName());
+            flag = true;
+        }
+        if (!flag) {
+            return JsonResult.error("请上传至少一个参数");
+        }
+        return JsonResult.success(mongoOperations.findAndModify(Query.query(Criteria.where("_id").is(userId)),
+                update, FindAndModifyOptions.options().returnNew(true), User.class));
     }
 }

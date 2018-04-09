@@ -20,10 +20,12 @@ public class SimpleUserVO {
     private String nickName;
     private String introduction;
     private String avatar;
+    private String userId;
 
     public SimpleUserVO(User user) {
         this.nickName = user.getNickName();
         this.introduction = user.getIntroduction();
         this.avatar = user.getAvatar();
+        this.userId = user.getId();
     }
 }

@@ -5,8 +5,8 @@ spring:
     name: common
   cloud:
     consul:
-      #host: localhost
-      host: 192.168.0.105
+      host: localhost
+      #host: 192.168.0.105
       discovery:
         prefer-ip-address: true
         healthCheckInterval: 5s
